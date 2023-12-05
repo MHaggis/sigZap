@@ -7,8 +7,7 @@ SigZap is a Streamlit application designed to facilitate the search across multi
 It provides a user-friendly interface to quickly and efficiently query different rule sets. 
 The application connects to a SQLite database where the rule sets are stored and allows the user to select a specific category 
 and enter a search term. The results are then displayed in a clear and readable format. 
-This tool is particularly useful for network administrators and security analysts who need to quickly identify and analyze 
-network traffic patterns and potential security threats.
+This tool is particularly useful for network administrators and security analysts who need to quickly find rules that match a specific search term.
 
 ## How to use SigZap
 
