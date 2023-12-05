@@ -39,5 +39,7 @@ with tab2:
         search_results = df[df['rule_text'].str.contains(search_term, case=False)]
         st.write(search_results)
 
+st.sidebar.image("assets/images/logo.png", width=300)
+
 # Uncomment to display the entire dataset
 # st.table(df)
