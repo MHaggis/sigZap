@@ -5,27 +5,39 @@ import re
 
 st.set_page_config(page_title="sigZap", layout="wide")
 
+# Connect to SQLite database and fetch data
 conn = sqlite3.connect('rules.db')
 query = "SELECT * FROM rule_sets"
 df = pd.read_sql_query(query, conn)
 conn.close()
 
-st.title('sigZap')
-st.markdown("""
-    This is a Streamlit application designed to facilitate the search across multiple network signature sets at once. 
-    It provides a user-friendly interface to quickly and efficiently query different rule sets. 
-    The application connects to a SQLite database where the rule sets are stored and allows the user to select a specific category 
-    and enter a search term. The results are then displayed in a clear and readable format. 
-    This tool is particularly useful for network administrators and security analysts who need to quickly find rules that match a specific search term.
-    """)
-
+# Extract categories from rule texts
 df['category'] = df['rule_text'].apply(lambda x: re.findall(r'msg:"(?:ET\s+)?([A-Z_\-]+)[^A-Z_\- ]*', x)[0] if re.findall(r'msg:"(?:ET\s+)?([A-Z_\-]+)[^A-Z_\- ]*', x) else None)
 
-categories = df['category'].dropna().unique()
-selected_category = st.selectbox('Select a category', options=categories)
-st.write(df[df['category'] == selected_category])
-search_term = st.text_input('Enter your search term here')
-st.write(df[df['rule_text'].str.contains(search_term, case=False)])
+# Streamlit application starts here
+st.title('sigZap')
+st.markdown("""
+    This Streamlit application facilitates searches across multiple network signature sets. 
+    Users can search by category or use a custom search term to query the database. 
+    The results are displayed in a clear and readable format, making it a valuable tool for network administrators and security analysts.
+""")
 
-# Uncomment to display a giant table.
-#st.table(df)       
+# Tab setup
+tab1, tab2 = st.tabs(["Category Search", "Search Ruleset"])
+
+with tab1:
+    st.subheader("Category Search")
+    categories = df['category'].dropna().unique()
+    selected_category = st.selectbox('Select a category:', options=categories)
+    filtered_df = df[df['category'] == selected_category]
+    st.write(filtered_df)
+
+with tab2:
+    st.subheader("Search Ruleset")
+    search_term = st.text_input('Enter your search term:')
+    if search_term:
+        search_results = df[df['rule_text'].str.contains(search_term, case=False)]
+        st.write(search_results)
+
+# Uncomment to display the entire dataset
+# st.table(df)
